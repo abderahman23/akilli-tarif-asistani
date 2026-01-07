@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🍳 Akıllı Tarif Asistanı</title>
+<style>
+/* Aynı CSS kodu, senin verdiğin gibi */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  max-width: 750px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 25px;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%);
+  padding: 40px 30px;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '🍳';
+  position: absolute;
+  font-size: 120px;
+  opacity: 0.1;
+  top: -20px;
+  right: -20px;
+  transform: rotate(-15deg);
+}
+
+.header h1 {
+  font-size: 2.2em;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.header p {
+  opacity: 0.95;
+  font-size: 1em;
+  font-weight: 300;
+}
+
+.content {
+  padding: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+textarea {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95em;
+  resize: vertical;
+  min-height: 120px;
+  transition: all 0.3s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  padding: 30px;
+  color: #667eea;
+}
+
+.loading.active {
+  display: block;
+}
+
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.result {
+  display: none;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 20px;
+  border-left: 5px solid #ff6b6b;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  white-space: pre-line;
+  line-height: 1.8;
+  color: #333;
+  font-size: 0.95em;
+}
+
+.result.active {
+  display: block;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error {
+  display: none;
+  background: #fee;
+  color: #c33;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+  border-left: 4px solid #c33;
+}
+
+.error.active {
+  display: block;
+}
+
+.feedback {
+  display: none;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.feedback.active {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  flex: 1;
+  min-width: 140px;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(17, 153, 142, 0.4);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+  color: white;
+  flex: 1;
+  min-width: 140px;
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(242, 153, 74, 0.4);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+  color: white;
+  flex: 1;
+  min-width: 140px;
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(235, 51, 73, 0.4);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-content h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.modal-content textarea {
+  min-height: 80px;
+  margin-bottom: 15px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 1.5em;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Başlık ve form -->
+  <div class="header">
+    <h1>🍳 Akıllı Tarif Asistanı</h1>
+    <p>Malzemelerinizi girin, size özel tarifler oluşturalım</p>
+  </div>
+
+  <div class="content">
+    <label>Malzemeler</label>
+    <textarea id="malzemeler" placeholder="Her satıra bir malzeme yazın"></textarea>
+
+    <label>Süre (dakika)</label>
+    <input type="number" id="sure" placeholder="30" min="5" />
+
+    <button class="btn btn-primary" onclick="tarifOlustur()">
+      ✨ Tarif Oluştur
+    </button>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Tarifler hazırlanıyor...</p>
+    </div>
+
+    <div id="error" class="error"></div>
+
+    <div id="result" class="result">
+      <div id="resultContent" class="result-content"></div>
+    </div>
+
+    <div id="feedback" class="feedback">
+      <button class="btn btn-success" onclick="begenildi(true)">
+        👍 Beğendim
+      </button>
+      <button class="btn btn-warning" onclick="baskaTarif()">
+        🔄 Başka Tarif
+      </button>
+      <button class="btn btn-danger" onclick="begenildi(false)">
+        👎 Beğenmedim
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <h3>Geri Bildirim</h3>
+    <textarea id="yorumInput" placeholder="İsteğiniz (ör: daha baharatlı)..."></textarea>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="modalKapat()">İptal</button>
+      <button class="btn btn-primary" onclick="yeniTarifIste()">Yeni Tarif</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GEMINI_API_KEY = "API_KEYINIZI_BURAYA_YAPISTIRIN"; // 
+
+let state = {
+  malzemeler: "",
+  sure: "",
+  oncekiTarif: ""
+};
+
+async function tarifOlustur(yeniden = false, yorum = "") {
+  const loading = document.getElementById("loading");
+  const result = document.getElementById("result");
+  const resultContent = document.getElementById("resultContent");
+  const error = document.getElementById("error");
+  const feedback = document.getElementById("feedback");
+  const submitBtn = document.querySelector(".btn-primary");
+
+  if (!yeniden) {
+    state.malzemeler = document.getElementById("malzemeler").value.trim();
+    state.sure = document.getElementById("sure").value.trim();
+  }
+
+  if (!state.malzemeler) {
+    showError("Lütfen en az bir malzeme girin.");
+    return;
+  }
+  if (!state.sure || state.sure < 5) {
+    showError("Lütfen geçerli bir süre girin (en az 5 dakika).");
+    return;
+  }
+
+  error.classList.remove("active");
+  result.classList.remove("active");
+  feedback.classList.remove("active");
+  loading.classList.add("active");
+  submitBtn.disabled = true;
+  resultContent.textContent = "";
+
+let prompt = `Sen profesyonel bir aşçısın.
+
+Kullanıcının verdiği malzemeler ve süreye göre
+KISA, NET ve YENİLEBİLİR bir yemek tarifi oluştur.
+
+ZORUNLU KURALLAR:
+- Cevap maksimum 120 kelime olsun.
+- Sadece verilen malzemeleri kullan.
+- Mantıksız eşleşmeler yapma (ör. portakal + yumurta pişirme).
+- Uygun olmayan malzeme varsa:
+  1 cümlelik kısa not ekle: “X bu tarif için uygun değil, kullanılmadı.”
+- Uzun açıklama, hikâye, giriş yazısı YAZMA.
+
+FORMAT (AYNEN BU SIRAYLA):
+
+Malzemeler:
+- Kısa liste
+
+Hazırlık:
+- En fazla 2–3 kısa adım
+
+Pişirme:
+- En fazla 2–3 kısa adım
+
+Servis Önerisi:
+- 1 kısa cümle
+
+Kalori:
+- Yaklaşık toplam kalori (ör: 380 kcal)
+
+SADECE düz metin ver.
+JSON, kod bloğu, markdown, emoji, çift tırnak kullanma.
+
+
+Malzemeler:
+${state.malzemeler}
+
+Süre: ${state.sure} dakika
+`;
+
+if (yeniden) {
+  prompt += `
+Önceki tarif beğenilmedi veya kullanıcı başka tarif istedi. Lütfen tamamen farklı bir tarif hazırla.
+Önceki tarif:
+${state.oncekiTarif}
+`;
+  if (yorum) {
+    prompt += `Kullanıcı yorumu: ${yorum}\n`;
+  }
+}
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            { role: "user", parts: [{ text: prompt }] }
+          ]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("API isteği başarısız: " + response.status);
+    }
+
+    const data = await response.json();
+    console.log("Gemini yanıt:", data);
+
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tarif oluşturulamadı.";
+    text = text.replace(/```[\s\S]*?```/g, "").trim();
+
+    state.oncekiTarif = text;
+    resultContent.textContent = text;
+    result.classList.add("active");
+    feedback.classList.add("active");
+
+  } catch (e) {
+    console.error(e);
+    showError("Tarif oluşturulurken bir hata oluştu: " + e.message);
+  } finally {
+    loading.classList.remove("active");
+    submitBtn.disabled = false;
+  }
+}
+
+function showError(msg) {
+  const error = document.getElementById("error");
+  error.textContent = "⚠️ " + msg;
+  error.classList.add("active");
+  setTimeout(() => error.classList.remove("active"), 5000);
+}
+
+// 👍 Beğenildi
+function begenildi(isGood) {
+  const feedback = document.getElementById("feedback");
+  if (isGood) {
+    feedback.classList.remove("active");
+    alert("Teşekkürler! Tarif beğenildi. 🍳");
+  } else {
+    modalAc(); // 👎 Beğenmediyse modal açılır
+  }
+}
+
+// 🔄 Başka tarif
+function baskaTarif() {
+  tarifOlustur(true); // tamamen farklı bir tarif oluştur
+}
+
+// Modal aç/kapat
+function modalAc() {
+  document.getElementById("modal").classList.add("active");
+}
+function modalKapat() {
+  document.getElementById("modal").classList.remove("active");
+}
+
+// Modal üzerinden yorum ile yeni tarif oluştur
+function yeniTarifIste() {
+  const yorum = document.getElementById("yorumInput").value.trim();
+  modalKapat();
+  tarifOlustur(true, yorum); // yorum ile yeni tarif oluştur
+}
+
+</script>
+
+</body>
+</html>
