@@ -1,6 +1,6 @@
-# 🍳 Akıllı Tarif Asistanı
+# 🍳 Yapay Aşçı Asistanı
 
-Akıllı Tarif Asistanı, kullanıcının elindeki malzemeler ve ayırabileceği süreye göre **Google Gemini AI** kullanarak **mantıklı, kısa ve düzenli yemek tarifleri** üreten modern ve kullanıcı dostu bir web uygulamasıdır.
+Yapay Aşçı Asistanı, kullanıcının elindeki malzemeler ve ayırabileceği süreye göre **Google Gemini AI** kullanarak **mantıklı, kısa ve düzenli yemek tarifleri** üreten modern ve kullanıcı dostu bir web uygulamasıdır.
 
 ---
 
