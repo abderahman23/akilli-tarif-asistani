@@ -114,4 +114,13 @@ Bu proje, **öğrenme ve prototipleme amaçlı** geliştirilmiştir.
 Modern AI tabanlı kullanıcı deneyimi örneği sunar.
 
 ---
-
+graph LR
+    A[🥗 Malzemeleri Girin] --> B[⏱️ Süreyi Belirleyin]
+    B --> C[🤖 AI Tarif Üretir]
+    C --> D[📋 Tarifi İnceleyin]
+    D --> E{Beğendiniz mi?}
+    E -->|👍 Evet| F[🎉 Afiyet Olsun!]
+    E -->|👎 Hayır| G[💬 Geri Bildirim Verin]
+    G --> C
+    D --> H[🔄 Farklı Tarif İsteyin]
+    H --> C
